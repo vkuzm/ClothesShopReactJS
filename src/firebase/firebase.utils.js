@@ -51,5 +51,3 @@ const createUserProfileDocument = async (userAuth, additionalData) => {
 };
 
 export { auth, firestore, signInWithGoogle, createUserProfileDocument };
-
-export default firebase;

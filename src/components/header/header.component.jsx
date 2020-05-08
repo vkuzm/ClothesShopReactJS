@@ -1,14 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { auth } from '../../firebase/firebase.utils';
+import CartIcon from '../cart-icon/cart-icon.component';
+import CartDropdown from '../cart-dropdown/cart-dropdown.component';
+import { selectCurrentUser } from '../../redux/user/user.selectors';
+import { selectCartHidden } from '../../redux/cart/cart.reselectors';
 import Loader from 'react-loader-spinner';
 import './header.styles.scss';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
 
 class Header extends React.Component {
   render() {
-    const user = this.props.currentUser;
+    const { currentUser, cartDropdownHidden } = this.props;
 
     return (
       <div className="header">
@@ -16,7 +21,9 @@ class Header extends React.Component {
           <Logo className="logo" />
         </Link>
         <div className="username">
-          {this.props.currentUser == null ? (
+          {currentUser ? (
+            <span>{`Hi, ${currentUser.logged ? currentUser.name : 'guest'}!`}</span>
+          ) : (
             <Loader
               style={{ marginTop: '8px' }}
               type="ThreeDots"
@@ -24,8 +31,6 @@ class Header extends React.Component {
               height={20}
               width={30}
             />
-          ) : (
-            <span>{`Hi, ${user.logged ? user.name : 'guest'}!`}</span>
           )}
         </div>
         <div className="options">
@@ -35,7 +40,7 @@ class Header extends React.Component {
           <Link className="option" to="/contact">
             CONTACT
           </Link>
-          {this.props.currentUser ? (
+          {currentUser && currentUser.logged ? (
             <div className="option" onClick={() => auth.signOut()}>
               SIGN OUT
             </div>
@@ -44,10 +49,24 @@ class Header extends React.Component {
               SIGN IN
             </Link>
           )}
+          <CartIcon />
         </div>
+        {cartDropdownHidden ? null : <CartDropdown />}
       </div>
     );
   }
 }
 
-export default Header;
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+  cartDropdownHidden: selectCartHidden
+});
+
+/* THE SAME
+const mapStateToProps = (state) => ({
+  currentUser: selectCurrentUser(state),
+  cartDropdownHidden: selectCartHidden(state)
+});
+ */
+
+export default connect(mapStateToProps)(Header);

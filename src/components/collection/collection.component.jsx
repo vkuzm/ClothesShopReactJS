@@ -1,6 +1,6 @@
-import React from "react";
-import "./collection.styles.scss";
-import CollectionItem from "../collection-item/collection-item.component";
+import React from 'react';
+import './collection.styles.scss';
+import CollectionItem from '../collection-item/collection-item.component';
 
 const Collection = ({ title, items }) => (
   <div className="collection-preview">
@@ -9,13 +9,7 @@ const Collection = ({ title, items }) => (
       {items
         .filter((item, index) => index < 4)
         .map((item) => (
-          <CollectionItem
-            key={items.id}
-            id={item.id}
-            name={item.name}
-            price={item.price}
-            imageUrl={item.imageUrl}
-          />
+          <CollectionItem key={item.id} item={item} />
         ))}
     </div>
   </div>
