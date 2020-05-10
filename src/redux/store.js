@@ -3,9 +3,15 @@ import { persistStore } from 'redux-persist';
 import logger from 'redux-logger';
 import rootReducer from './root-reducer';
 
-const middleware = [logger];
+const isDevelopment = process.env.NODE_ENV === 'development';
+const middleware = [];
+
+if (isDevelopment) {
+  middleware.push(logger);
+}
+
 const composeEnhancers =
-  typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+  isDevelopment && typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
     : compose;
 
