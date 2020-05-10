@@ -9,13 +9,13 @@ const config = {
   projectId: 'crwn-db-9ce89',
   storageBucket: 'crwn-db-9ce89.appspot.com',
   messagingSenderId: '679323290074',
-  appId: '1:679323290074:web:4bab70b0efb0ed7c63d8e3',
+  appId: '1:679323290074:web:4bab70b0efb0ed7c63d8e3'
 };
 
 firebase.initializeApp(config);
 
-const auth = firebase.auth();
-const firestore = firebase.firestore();
+export const auth = firebase.auth();
+export const firestore = firebase.firestore();
 
 const provider = () => {
   const newProvider = new firebase.auth.GoogleAuthProvider();
@@ -23,9 +23,9 @@ const provider = () => {
   return newProvider;
 };
 
-const signInWithGoogle = () => auth.signInWithPopup(provider());
+export const signInWithGoogle = () => auth.signInWithPopup(provider());
 
-const createUserProfileDocument = async (userAuth, additionalData) => {
+export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return;
 
   const userRef = firestore.doc(`users/${userAuth.uid}`);
@@ -40,7 +40,7 @@ const createUserProfileDocument = async (userAuth, additionalData) => {
         displayName,
         email,
         createdAt,
-        ...additionalData,
+        ...additionalData
       });
     } catch (error) {
       console.log('Error creating user', error);
@@ -50,4 +50,33 @@ const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
-export { auth, firestore, signInWithGoogle, createUserProfileDocument };
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+  const collectionRef = firestore.collection(collectionKey);
+  const batch = firestore.batch();
+
+  objectsToAdd.forEach((object) => {
+    const docName = object.docName ? object.docName : null;
+    const newDocRef = collectionRef.doc(docName);
+    batch.set(newDocRef, object);
+  });
+
+  return await batch.commit();
+};
+
+export const convertCollectionsSnapshotToMap = (collections) => {
+  const transformCollection = collections.docs.map((doc) => {
+    const { title, routeName, items } = doc.data();
+
+    return {
+      id: doc.id,
+      routeName: encodeURI(routeName),
+      title: title,
+      items: items
+    };
+  });
+
+  return transformCollection.reduce((accumulator, collection) => {
+    accumulator[collection.id] = collection;
+    return accumulator;
+  }, {});
+};
