@@ -7,6 +7,11 @@ export const selectCollections = createSelector(
   (shop) => shop.collections
 );
 
+export const selectSearchText = createSelector(
+  [selectShop],
+  (shop) => shop.search
+);
+
 export const selectCollection = (collectionUrlParam) => (
    createSelector(
     [selectCollections],
@@ -17,4 +22,12 @@ export const selectCollection = (collectionUrlParam) => (
 export const selectCollectionsForPreview = createSelector(
   [selectCollections],
   (collections) => (collections ? Object.values(collections) : [])
+);
+
+export const selectCollectionsForSearch = createSelector(
+  [selectCollectionsForPreview],
+  (collections) =>
+    collections
+      .map((collection) => collection.items)
+      .reduce((accumulator, items) => accumulator.concat(items), [])
 );
