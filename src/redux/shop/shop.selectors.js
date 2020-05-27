@@ -24,6 +24,17 @@ export const selectCollectionsForPreview = createSelector(
   (collections) => (collections ? Object.values(collections) : [])
 );
 
+export const selectIsCollectionLoading = createSelector(
+  [selectShop],
+  shop => shop.isLoading
+);
+
+export const selectIsCollectionLoaded = createSelector(
+  [selectShop],
+  shop => !!shop.collections
+);
+
+
 export const selectCollectionsForSearch = createSelector(
   [selectCollectionsForPreview],
   (collections) =>
